@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 """Script that does the deployment"""
-from fabric.api import run, local, env
-from datetime import datetime
 import os
-import re
+from datetime import datetime
+from fabric.api import env, local, run
 
 
 env.hosts = ['34.139.167.198', '34.138.129.5']
+
 
 def do_pack():
     """function that generates .tgz file"""
@@ -19,43 +19,36 @@ def do_pack():
     except:
         return None
 
-def do_deploy():
-    """function to make the deployment"""
-    if not os.path.exists(archived_path):
+def do_deploy(archive_path):
+    """Distributes an archive to your web servers"""
+    if not os.path.exists(archive_path):
         return False
-    rex = r'^versions/(\S+).tgz'
-    match = re.search(rex, archive_path)
-    filename = match.group(1)
-    response = put(archive_path, "/tmp/{}.tgz".format(filename))
-    if response.failed:
-        return False
-    response = run("mkdir -p /data/web_static/releases/{}/".format(filename))
-    if response.failed:
-        return False
-    response = run("tar -xzf /tmp/{}.tgz -C /data/web_static/releases/{}/"
-              .format(filename, filename))
-    if response.failed:
-        return False
-    response = run("rm /tmp/{}.tgz".format(filename))
-    if response.failed:
-        return False
-    response = run("mv /data/web_static/releases/{}"
-              "/web_static/* /data/web_static/releases/{}/"
-              .format(filename, filename))
-    if response.failed:
-        return False
-    response = run("rm -rf /data/web_static/releases/{}/web_static"
-              .format(filename))
-    if response.failed:
-        return False
-    response = run("rm -rf /data/web_static/current")
-    if response.failed:
-        return False
-    response = run("ln -s /data/web_static/releases/{}/ /data/web_static/current"
-              .format(filename))
-    if response.failed:
-        return False
-    print('New version deployed!')
-    return True
+    else:
+        try:
+            put(archive_path, "/tmp/")
+            filename = archive_path.split('/', 1)
+            no_ext = filename[1].split('.', 1)
+            archive = no_ext[0]
+            run("mkdir -p /data/web_static/releases/" + archive + "/")
+            run("tar -zxf /tmp/" + filename[1] +
+                " -C /data/web_static/releases/" +
+                archive + "/")
+            run("rm /tmp/" + filename[1])
+            run("mv /data/web_static/releases/" + archive +
+                "/web_static/* /data/web_static/releases/" + archive + "/")
+            run("rm -rf /data/web_static/releases/" + archive + "/web_static")
+            run("rm -rf /data/web_static/current")
+            run("ln -s /data/web_static/releases/" + archive +
+                "/ /data/web_static/current")
+            print("New version deployed!")
+            return True
+        except:
+            return False
 
 def deploy():
+	"""Creates and makes the deployment"""
+	file_name = do_pack()
+	if file_name:
+		return do_deploy(file_name)
+	else:
+		return False
