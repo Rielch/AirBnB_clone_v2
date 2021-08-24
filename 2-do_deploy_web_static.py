@@ -23,46 +23,37 @@ def do_deploy():
     """function to make the deployment"""
     if not os.path.exists(archived_path):
         return False
-    else:
-        rex = r'^versions/(\S+).tgz'
-        match = re.search(rex, archive_path)
-        filename = match.group(1)
-        result = put(archive_path, "/tmp/{}.tgz".format(filename))
-    if result.failed:
+    rex = r'^versions/(\S+).tgz'
+    match = re.search(rex, archive_path)
+    filename = match.group(1)
+    response = put(archive_path, "/tmp/{}.tgz".format(filename))
+    if response.failed:
         return False
-    else:
-        result = run("mkdir -p /data/web_static/releases/{}/".format(filename))
-    if result.failed:
+    response = run("mkdir -p /data/web_static/releases/{}/".format(filename))
+    if response.failed:
         return False
-    else:
-        result = run("tar -xzf /tmp/{}.tgz -C /data/web_static/releases/{}/"
+    response = run("tar -xzf /tmp/{}.tgz -C /data/web_static/releases/{}/"
               .format(filename, filename))
-    if result.failed:
+    if response.failed:
         return False
-    else:
-        result = run("rm /tmp/{}.tgz".format(filename))
-    if result.failed:
+    response = run("rm /tmp/{}.tgz".format(filename))
+    if response.failed:
         return False
-    else:
-        result = run("mv /data/web_static/releases/{}"
+    response = run("mv /data/web_static/releases/{}"
               "/web_static/* /data/web_static/releases/{}/"
               .format(filename, filename))
-    if result.failed:
+    if response.failed:
         return False
-    else:
-        result = run("rm -rf /data/web_static/releases/{}/web_static"
+    response = run("rm -rf /data/web_static/releases/{}/web_static"
               .format(filename))
-    if result.failed:
+    if response.failed:
         return False
-    else:
-        result = run("rm -rf /data/web_static/current")
-    if result.failed:
+    response = run("rm -rf /data/web_static/current")
+    if response.failed:
         return False
-    else:
-        result = run("ln -s /data/web_static/releases/{}/ /data/web_static/current"
+    response = run("ln -s /data/web_static/releases/{}/ /data/web_static/current"
               .format(filename))
-    if result.failed:
+    if response.failed:
         return False
-    else:
-        print('New version deployed!')
-        return True
+    print('New version deployed!')
+    return True
