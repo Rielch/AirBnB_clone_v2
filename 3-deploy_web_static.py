@@ -9,7 +9,7 @@ env.hosts = ['34.139.167.198', '34.138.129.5']
 
 
 def do_pack():
-    """function that generates .tgz file"""
+    """Generates a .tgz archive"""
     try:
         local("mkdir -p versions")
         n = datetime.now()
@@ -19,36 +19,37 @@ def do_pack():
     except:
         return None
 
+
 def do_deploy(archive_path):
     """Distributes an archive to your web servers"""
-    if not os.path.exists(archive_path):
-        return False
-    else:
+    if os.path.exists(archive_path):
         try:
             put(archive_path, "/tmp/")
             filename = archive_path.split('/', 1)
             no_ext = filename[1].split('.', 1)
-            archive = no_ext[0]
-            run("mkdir -p /data/web_static/releases/" + archive + "/")
+            file_name = no_ext[0]
+            run("mkdir -p /data/web_static/releases/" + file_name + "/")
             run("tar -zxf /tmp/" + filename[1] +
                 " -C /data/web_static/releases/" +
-                archive + "/")
+                file_name + "/")
             run("rm /tmp/" + filename[1])
-            run("mv /data/web_static/releases/" + archive +
-                "/web_static/* /data/web_static/releases/" + archive + "/")
-            run("rm -rf /data/web_static/releases/" + archive + "/web_static")
+            run("mv /data/web_static/releases/" + file_name +
+                "/web_static/* /data/web_static/releases/" + file_name + "/")
+            run("rm -rf /data/web_static/releases/" + file_name + "/web_static")
             run("rm -rf /data/web_static/current")
-            run("ln -s /data/web_static/releases/" + archive +
+            run("ln -s /data/web_static/releases/" + file_name +
                 "/ /data/web_static/current")
             print("New version deployed!")
             return True
         except:
             return False
+    else:
+        return False
+
 
 def deploy():
-	"""Creates and makes the deployment"""
-	file_name = do_pack()
-	if file_name:
-		return do_deploy(file_name)
-	else:
-		return False
+    """Creates and distributes an archive to your web servers"""
+    file_name = do_pack()
+    if not file_name:
+        return False
+    return do_deploy(file_name)
