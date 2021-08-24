@@ -4,20 +4,22 @@ from fabric.operations import local, run, put
 from datetime import datetime
 import os
 import re
-from fabric.api import env
+from fabric.api import env, local
 
 
 env.hosts = ['34.139.167.198', '34.138.129.5']
 
 def do_pack():
-    """function to compress files """
-    local("mkdir -p versions")
-    return_command = local("tar -cvzf versions/web_static_{}.tgz web_static"
-                   .format(datetime.strftime(datetime.now(), "%Y%m%d%H%M%S")),
-                   capture=True)
-    if return_command.failed:
+    """function that generates .tgz file"""
+    try:
+        local("mkdir -p versions")
+        n = datetime.now()
+        filename = "versions/web_static_" + n.strftime("%Y%m%d%H%M%S") + ".tgz"
+        local("tar -cvzf " + filename + " web_static")
+        return filename
+    except:
         return None
-    return return_command
+
 
 def do_deploy():
     """function to make the deployment"""
