@@ -6,7 +6,6 @@ from fabric.api import env, local, run, put
 
 
 env.hosts = ['34.139.167.198', '34.138.129.5']
-env.user = ['ubuntu']
 
 def do_pack():
     """Generates a .tgz archive"""
