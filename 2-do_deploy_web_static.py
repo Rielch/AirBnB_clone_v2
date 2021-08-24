@@ -27,41 +27,41 @@ def do_deploy():
         rex = r'^versions/(\S+).tgz'
         match = re.search(rex, archive_path)
         filename = match.group(1)
-        res = put(archive_path, "/tmp/{}.tgz".format(filename))
-    if res.failed:
+        result = put(archive_path, "/tmp/{}.tgz".format(filename))
+    if result.failed:
         return False
     else:
-        res = run("mkdir -p /data/web_static/releases/{}/".format(filename))
-    if res.failed:
+        result = run("mkdir -p /data/web_static/releases/{}/".format(filename))
+    if result.failed:
         return False
     else:
-        res = run("tar -xzf /tmp/{}.tgz -C /data/web_static/releases/{}/"
+        result = run("tar -xzf /tmp/{}.tgz -C /data/web_static/releases/{}/"
               .format(filename, filename))
-    if res.failed:
+    if result.failed:
         return False
     else:
-        res = run("rm /tmp/{}.tgz".format(filename))
-    if res.failed:
+        result = run("rm /tmp/{}.tgz".format(filename))
+    if result.failed:
         return False
     else:
-        res = run("mv /data/web_static/releases/{}"
+        result = run("mv /data/web_static/releases/{}"
               "/web_static/* /data/web_static/releases/{}/"
               .format(filename, filename))
-    if res.failed:
+    if result.failed:
         return False
     else:
-        res = run("rm -rf /data/web_static/releases/{}/web_static"
+        result = run("rm -rf /data/web_static/releases/{}/web_static"
               .format(filename))
-    if res.failed:
+    if result.failed:
         return False
     else:
-        res = run("rm -rf /data/web_static/current")
-    if res.failed:
+        result = run("rm -rf /data/web_static/current")
+    if result.failed:
         return False
     else:
-        res = run("ln -s /data/web_static/releases/{}/ /data/web_static/current"
+        result = run("ln -s /data/web_static/releases/{}/ /data/web_static/current"
               .format(filename))
-    if res.failed:
+    if result.failed:
         return False
     else:
         print('New version deployed!')
