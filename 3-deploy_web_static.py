@@ -2,7 +2,7 @@
 """Script that does the deployment"""
 import os
 from datetime import datetime
-from fabric.api import env, local, run
+from fabric.api import env, local, run, put
 
 
 env.hosts = ['34.139.167.198', '34.138.129.5']
@@ -18,7 +18,6 @@ def do_pack():
         return filename
     except:
         return None
-
 
 def do_deploy(archive_path):
     """Distributes an archive to your web servers"""
@@ -45,7 +44,6 @@ def do_deploy(archive_path):
             return False
     else:
         return False
-
 
 def deploy():
     """Creates and distributes an archive to your web servers"""
