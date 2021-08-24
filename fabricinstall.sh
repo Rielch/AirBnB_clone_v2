@@ -1,4 +1,4 @@
-#!/usr\/bin/env bash
+#!/usr/bin/env bash
 
 pip3 uninstall Fabric
 sudo apt-get install libffi-dev
