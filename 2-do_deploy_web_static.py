@@ -8,6 +8,7 @@ from fabric.api import *
 
 env.hosts = ['34.139.167.198', '34.138.129.5']
 
+
 def do_deploy(archive_path):
     """Distributes an archive to your web servers"""
     if not os.path.exists(archive_path):
@@ -15,8 +16,8 @@ def do_deploy(archive_path):
     else:
         try:
             put(archive_path, "/tmp/")
-            filename = archive_path.split('/', 1)
-            no_ext = filename[1].split('.', 1)
+            filename = archive_path.split('/')
+            no_ext = filename[-1].split('.')
             archive = no_ext[0]
             run("mkdir -p /data/web_static/releases/" + archive + "/")
             run("tar -zxf /tmp/" + filename[1] +
