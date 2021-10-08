@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+"""Starts a web application and displays a list of states"""
 from flask import Flask, render_template
 from models import storage
 from models.state import State
