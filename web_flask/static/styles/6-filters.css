@@ -18,12 +18,12 @@
 	border-right: 1px solid #DDDDDD;
 }
 
-.filter_amenities {
+.amenities {
 	display: inline;
 	vertical-align: middle;
 	height: 100%;
 	float: left;
-    width: 25%;
+	width: 25%;
 
 	line-height: 20px;
 }
@@ -33,7 +33,7 @@
 	display: none;
 	background-color: #FAFAFA;
 	width: 100%;
-	overflow: scroll;
+	overflow: auto;
 	max-height: 300px;
 
 	margin-left: -1px;
@@ -48,7 +48,7 @@
 	display: inline-block;
 }
 
-.filter_amenities:hover .popover {
+.amenities:hover .popover {
 	display: inline-block;
 }
 
